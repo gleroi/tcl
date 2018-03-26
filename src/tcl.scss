@@ -1,3 +1,9 @@
+$tcl_primary: #e41e26;
+
+body {
+    font-family: Arial, Helvetica, sans-serif
+}
+
 .arrets-container {
     display: flex;
     align-items: flex-start;
@@ -10,7 +16,7 @@
     
         min-width: 7em;
     
-        background-color: rgb(202, 122, 245);
+        background-color: $tcl_primary;
         color: #eeeeee;
     
         margin: 0.3em;
