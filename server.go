@@ -41,7 +41,7 @@ const UrlLigne = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tcllig
 
 /*
 UrlArret schema
-0	"id"
+0	"id" : ID arret
 1	"nom"
 2	"desserte"
 3	"pmr"
@@ -52,7 +52,7 @@ const UrlArret = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tclarr
 
 /*
 UrlPassageArret schema
-0	"id"
+0	"id" : ID arret
 1	"ligne"
 2	"direction"
 3	"delaipassage"
