@@ -1,0 +1,35 @@
+.arrets-container {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .arrets-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    
+        min-width: 7em;
+    
+        background-color: rgb(202, 122, 245);
+        color: #eeeeee;
+    
+        margin: 0.3em;
+        padding: 0.5em 1em;
+
+        .arrets-item-arret {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .arrets-item-delai {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0.6em 0;
+        }
+
+        .arrets-item-ligne {
+            font-weight: bold;
+        }
+    }
+    
+}
