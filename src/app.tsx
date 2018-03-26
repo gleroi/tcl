@@ -27,7 +27,7 @@ export default class App extends React.Component<any, AppState> {
                 <h1>TCL</h1>
                 <div>
                     <form className="search-arret">
-                        <label>Ligne: 
+                        <label>Ligne:
                             <input type="text" value={this.state.searchLigne} onChange={(e) => this.handleSearchChange(e)} />
                         </label>
                         <button type="button">Chercher</button>
@@ -36,9 +36,12 @@ export default class App extends React.Component<any, AppState> {
                 <div className="arrets-container">
                     {this.state.arrets.map((arret: tcl.PassageArret) => (
                         <div className="arrets-item">
-                            <span className="arrets-item-arret">{arret.idtarretdestination}</span>
+                            <span className="arrets-item-arret">{arret.id}</span>
                             <span className="arrets-item-delai">{arret.delaipassage}</span>
-                            <span className="arrets-item-ligne">{arret.ligne}</span>
+                            <span className="arrets-footer">
+                                <span className="arrets-item-ligne">{arret.ligne}</span>
+                                <span className="arrets-item-direction">{arret.direction}</span>
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -55,7 +58,7 @@ export default class App extends React.Component<any, AppState> {
 
 }
 
-function update<T>(original: T, delta: Partial<T>) : T {
+function update<T>(original: T, delta: Partial<T>): T {
     return Object.assign({}, original, delta);
 }
 

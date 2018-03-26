@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -9,8 +10,8 @@ import (
 )
 
 func main() {
-	flag.StringVar(&PassageArretLogin, "l", "", "login to connect to TCL service")
-	flag.StringVar(&PassageArretPassword, "p", "", "password to connect to TCL service")
+	flag.StringVar(&TclLogin, "l", "", "login to connect to TCL service")
+	flag.StringVar(&TclPassword, "p", "", "password to connect to TCL service")
 	flag.Parse()
 
 	http.Handle("/", http.FileServer(http.Dir("dist/")))
@@ -40,17 +41,6 @@ UrlLigne schema
 const UrlLigne = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tcllignebus/all.json"
 
 /*
-UrlArret schema
-0	"id" : ID arret
-1	"nom"
-2	"desserte"
-3	"pmr"
-4	"ascenseur"
-5	"escalator"
-*/
-const UrlArret = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tclarret/all.json"
-
-/*
 UrlPassageArret schema
 0	"id" : ID arret
 1	"ligne"
@@ -65,8 +55,15 @@ UrlPassageArret schema
 */
 const UrlPassageArret = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tclpassagearret/all.json"
 
-var PassageArretLogin = ""
-var PassageArretPassword = ""
+type PassageArret struct {
+	ID           string
+	Ligne        string
+	Direction    string
+	DelaiPassage string
+}
+
+var TclLogin = ""
+var TclPassword = ""
 
 func apiPassageArret(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.RawQuery
@@ -76,15 +73,64 @@ func apiPassageArret(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	req.SetBasicAuth(PassageArretLogin, PassageArretPassword)
+	arrets, err := apiArret()
+	log.Println(arrets)
+	log.Println(err)
+	req.SetBasicAuth(TclLogin, TclPassword)
 	clt := &http.Client{}
 	resp, err := clt.Do(req)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Printf("Error: %s\n  l/p:%s/%s\n  %s\n", req.URL, PassageArretLogin, PassageArretPassword, err)
-		fmt.Fprintf(w, "Error: %s\n  l/p:%s/%s\n  %s\n", req.URL, PassageArretLogin, PassageArretPassword, err)
+		log.Printf("Error: %s\n  l/p:%s/%s\n  %s\n", req.URL, TclLogin, TclPassword, err)
+		fmt.Fprintf(w, "Error: %s\n  l/p:%s/%s\n  %s\n", req.URL, TclLogin, TclPassword, err)
 		return
 	}
+	defer resp.Body.Close()
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
+}
+
+/*
+UrlArret schema
+0	"id"
+1	"nom"
+2	"desserte"
+3	"pmr"
+4	"ascenseur"
+5	"escalator"
+6	"gid"
+7	"last_update"
+8	"last_update_fme"
+*/
+const UrlArret = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tclarret/all.json"
+
+type Arret struct {
+	ID        string
+	Nom       string
+	Desserte  string
+	PMR       string
+	Escalator string
+	GID       string
+}
+
+type ArretResult struct {
+	Values []Arret
+}
+
+func apiArret() (ArretResult, error) {
+	var result ArretResult
+	req, err := http.NewRequest("GET", UrlArret, nil)
+	if err != nil {
+		return result, err
+	}
+	req.SetBasicAuth(TclLogin, TclPassword)
+	clt := &http.Client{}
+	resp, err := clt.Do(req)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	jsDecoder := json.NewDecoder(resp.Body)
+	err = jsDecoder.Decode(&result)
+	return result, err
 }
