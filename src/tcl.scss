@@ -1,8 +1,23 @@
 $tcl_primary: #e41e26;
 
+$fg_light: #fff;
+
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #eee;
+    background-color: #fff;
+    margin: 0 0.3em;
+    padding: 0;
+}
+
+.app-header {
+    background-color: darken($tcl_primary, 5%);
+    margin: 0;
+    padding: 0.5em;
+    color: $fg_light;
+}
+
+.search-arret {
+    margin: 1em 0;
 }
 
 .arrets-container {
@@ -17,15 +32,15 @@ body {
     
         min-width: 7em;
     
-        background-color: $tcl_primary;
-        color: #fff;
+        background-color: darken($tcl_primary, 5%);
+        color: $fg_light;
     
         margin: 0.3em;
         padding: 0.5em 0.7em;
 
         .arrets-footer {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; 
         }
 
         .arrets-item-arret {

@@ -24,7 +24,9 @@ export default class App extends React.Component<any, AppState> {
     render() {
         return (
             <div>
-                <h1>TCL</h1>
+                <header className="app-header">
+                    <h1>TCL</h1>
+                </header>
                 <div>
                     <form className="search-arret">
                         <label>Ligne:
@@ -35,8 +37,8 @@ export default class App extends React.Component<any, AppState> {
                 </div>
                 <div className="arrets-container">
                     {this.state.arrets.map((arret: tcl.PassageArret) => (
-                        <div className="arrets-item">
-                            <span className="arrets-item-arret">{arret.id}</span>
+                        <div key={arret.id} className="arrets-item">
+                            <span className="arrets-item-arret">{arret.nom}</span>
                             <span className="arrets-item-delai">{arret.delaipassage}</span>
                             <span className="arrets-footer">
                                 <span className="arrets-item-ligne">{arret.ligne}</span>

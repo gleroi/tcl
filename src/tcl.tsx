@@ -11,6 +11,7 @@ export interface PassageArret {
     last_update_fme: string;
     type: string;
     id: string;
+    nom?: string;
 }
 
 export function getPassageArrets(ligne: string): Promise<PassageArret[]> {
