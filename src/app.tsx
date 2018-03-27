@@ -1,10 +1,13 @@
 import * as React from "react";
 import * as tcl from "./tcl";
+import { Store } from "./store";
 
 interface AppState {
     arrets: tcl.PassageArret[];
     searchLigne: string;
 }
+
+var store = new Store();
 
 export default class App extends React.Component<any, AppState> {
     constructor(props: void, context: any) {
@@ -16,9 +19,12 @@ export default class App extends React.Component<any, AppState> {
     }
 
     componentDidMount() {
-        tcl.getPassageArrets("C13A")
-            .then(stops => this.setState({ arrets: stops }))
-            .catch(err => console.error(err));
+        store.addChangeListener(s => {
+            this.setState(update(this.state, {
+                arrets: s.passages
+            }));
+        });
+        store.getPassages("C13A");
     }
 
     render() {
@@ -37,8 +43,11 @@ export default class App extends React.Component<any, AppState> {
                 </div>
                 <div className="arrets-container">
                     {this.state.arrets.map((arret: tcl.PassageArret) => (
-                        <div key={arret.id} className="arrets-item">
+                        <div key={arret.gid} className="arrets-item">
+                        <span className="arrets-footer">
                             <span className="arrets-item-arret">{arret.nom}</span>
+                            <button className="arrets-item-favorite"></button>
+                        </span>
                             <span className="arrets-item-delai">{arret.delaipassage}</span>
                             <span className="arrets-footer">
                                 <span className="arrets-item-ligne">{arret.ligne}</span>
@@ -53,9 +62,7 @@ export default class App extends React.Component<any, AppState> {
 
     handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
         this.setState(update(this.state, { searchLigne: e.target.value }))
-        tcl.getPassageArrets(e.target.value)
-            .then(stops => this.setState({ arrets: stops }))
-            .catch(err => console.error(err));
+        store.getPassages(e.target.value);
     }
 
 }

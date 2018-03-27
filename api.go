@@ -112,6 +112,7 @@ UrlPassageArret schema
 const UrlPassageArret = "https://download.data.grandlyon.com/ws/rdata/tcl_sytral.tclpassagearret/all.json"
 
 type PassageArret struct {
+	GID          string `json:"gid"`
 	ID           string `json:"id"`
 	Nom          string `json:"nom"`
 	Ligne        string `json:"ligne"`
