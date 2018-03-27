@@ -3,6 +3,7 @@ import * as tcl from "./tcl";
 export class Store {
     listeners: ((s :Store) => void)[] = [];
     passages: tcl.PassageArret[] = [];
+    favorites: Map<string, boolean> = new Map();
 
     getPassages(ligne: string) {
         tcl.getPassageArrets(ligne)
@@ -25,6 +26,21 @@ export class Store {
         .catch(err => {
             console.error("retrieving passages arrets", err);
         });
+    }
+
+    isFavorite(arret: tcl.PassageArret) : boolean {
+        return this.favorites.get(arret.id);
+    }
+
+    toggleFavorite(arret: tcl.PassageArret) {
+        if (!this.favorites.has(arret.id)) {
+            this.favorites.set(arret.id, true);
+            console.log("toggleFavorite", arret.id, true);
+        } else {
+            this.favorites.set(arret.id, !this.favorites.get(arret.id))
+            console.log("toggleFavorite", arret.id, this.favorites.get(arret.id));
+        }
+        this.raise();
     }
 
     raise() {
