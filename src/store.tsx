@@ -5,6 +5,10 @@ export class Store {
     passages: tcl.PassageArret[] = [];
     favorites: Map<string, boolean> = new Map();
 
+    constructor() {
+        this.loadFavorites();
+    }
+
     getPassages(ligne: string) {
         tcl.getPassageArrets(ligne)
         .then(arrets => {
@@ -35,12 +39,22 @@ export class Store {
     toggleFavorite(arret: tcl.PassageArret) {
         if (!this.favorites.has(arret.id)) {
             this.favorites.set(arret.id, true);
-            console.log("toggleFavorite", arret.id, true);
         } else {
-            this.favorites.set(arret.id, !this.favorites.get(arret.id))
-            console.log("toggleFavorite", arret.id, this.favorites.get(arret.id));
+            this.favorites.delete(arret.id);
         }
+        this.saveFavorites()
         this.raise();
+    }
+
+    saveFavorites() {
+        let entries = Array.from(this.favorites.entries())
+        localStorage.setItem("favorites", JSON.stringify(entries))
+    }
+
+    loadFavorites() {
+        let json = localStorage.getItem("favorites")
+        let entries : [string, boolean][] = JSON.parse(json);
+        this.favorites = new Map(entries);
     }
 
     raise() {

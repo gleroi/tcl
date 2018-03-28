@@ -4,6 +4,7 @@ import { Store } from "./store";
 
 interface AppState {
     arrets: tcl.PassageArret[];
+    favorites: tcl.PassageArret[];
     searchLigne: string;
     searchVisibility: string;
 }
@@ -15,6 +16,7 @@ export default class App extends React.Component<any, AppState> {
         super(props, context)
         this.state = {
             arrets: [],
+            favorites: [],
             searchLigne: "",
             searchVisibility: "hidden"
         }
@@ -38,28 +40,12 @@ export default class App extends React.Component<any, AppState> {
                         <span className="fa fa-search"></span>
                     </button>
                 </header>
-                <div className={"search-arret "+ this.state.searchVisibility}>
+                <div className={"search-arret " + this.state.searchVisibility}>
                     <label>Ligne:
                         <input type="text" value={this.state.searchLigne} onChange={(e) => this.handleSearchChange(e)} />
                     </label>
                 </div>
-                <div className="arrets-container">
-                    {this.state.arrets.map((arret: tcl.PassageArret) => (
-                        <div key={arret.gid} className="arrets-item" onClick={(e) => this.toggleFavorite(arret)}>
-                            <span className="arrets-footer">
-                                <span className="arrets-item-arret">{arret.nom}</span>
-                                {store.isFavorite(arret) && (
-                                    <span className="arrets-item-favorite"></span>
-                                )}
-                            </span>
-                            <span className="arrets-item-delai">{arret.delaipassage}</span>
-                            <span className="arrets-footer">
-                                <span className="arrets-item-ligne">{arret.ligne}</span>
-                                <span className="arrets-item-direction">{arret.direction}</span>
-                            </span>
-                        </div>
-                    ))}
-                </div>
+                <PassageList arrets={this.state.arrets} />
             </div>
         );
     }
@@ -69,9 +55,6 @@ export default class App extends React.Component<any, AppState> {
         store.getPassages(e.target.value);
     }
 
-    toggleFavorite(arret: tcl.PassageArret) {
-        store.toggleFavorite(arret);
-    }
 
     toggleSearch() {
         this.setState(update(this.state, {
@@ -79,6 +62,39 @@ export default class App extends React.Component<any, AppState> {
         }));
     }
 
+}
+
+interface PassageListProps {
+    arrets: tcl.PassageArret[];
+}
+
+class PassageList extends React.Component<PassageListProps, any> {
+    render() {
+        return (
+            <div className="arrets-container">
+                {this.props.arrets.map((arret: tcl.PassageArret) => (
+                    <div key={arret.gid} className="arrets-item" onClick={(e) => this.toggleFavorite(arret)}>
+                        <span className="arrets-footer">
+                            <span className="arrets-item-arret">{arret.nom}</span>
+                            {store.isFavorite(arret) && (
+                                <span className="arrets-item-favorite"></span>
+                            )}
+                        </span>
+                        <span className="arrets-item-delai">{arret.delaipassage}</span>
+                        <span className="arrets-footer">
+                            <span className="arrets-item-ligne">{arret.ligne}</span>
+                            <span className="arrets-item-direction">{arret.direction}</span>
+                        </span>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    
+    toggleFavorite(arret: tcl.PassageArret) {
+        store.toggleFavorite(arret);
+    }
 }
 
 function update<T>(original: T, delta: Partial<T>): T {
