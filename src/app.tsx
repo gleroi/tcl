@@ -80,7 +80,8 @@ class PassageList extends React.Component<PassageListProps, any> {
                                 <span className="arrets-item-favorite"></span>
                             )}
                         </span>
-                        <span className="arrets-item-delai">{arret.delaipassage}</span>
+                        <span className="arrets-item-delai">{arret.delais[0]}</span>
+                        <span className="arrets-item-delai">{arret.delais[1]}</span>
                         <span className="arrets-footer">
                             <span className="arrets-item-ligne">{arret.ligne}</span>
                             <span className="arrets-item-direction">{arret.direction}</span>

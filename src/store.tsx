@@ -17,10 +17,10 @@ export class Store {
                 let key = arret.id + arret.direction;
                 if (groups.has(key)) {
                     let other = groups.get(key);
-                    if (arret.delaipassage < other.delaipassage) {
-                        groups.set(key, arret);
-                    }
+                    this.mergeArret(other, arret)
+                    groups.set(key, other);
                 } else {
+                    arret.delais = [arret.delaipassage, "NA"]
                     groups.set(key, arret);
                 }
             });
@@ -30,6 +30,18 @@ export class Store {
         .catch(err => {
             console.error("retrieving passages arrets", err);
         });
+    }
+
+    mergeArret(a1 : tcl.PassageArret, a2: tcl.PassageArret) {
+        if (this.delai(a1) < this.delai(a2)) {
+            a1.delais = [a1.delaipassage, a2.delaipassage];
+        } else {
+            a1.delais = [a2.delaipassage, a1.delaipassage];
+        }
+    }
+
+    delai(a : tcl.PassageArret) : number {
+        return parseInt(a.delaipassage);
     }
 
     isFavorite(arret: tcl.PassageArret) : boolean {

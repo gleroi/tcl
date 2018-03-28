@@ -12,6 +12,8 @@ export interface PassageArret {
     type: string;
     id: string;
     nom?: string;
+
+    delais: string[];
 }
 
 export function getPassageArrets(ligne: string): Promise<PassageArret[]> {
