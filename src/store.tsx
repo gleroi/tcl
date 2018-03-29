@@ -3,7 +3,7 @@ import * as tcl from "./tcl";
 export class Store {
     listeners: ((s :Store) => void)[] = [];
     passages: tcl.PassageArret[] = [];
-    favorites: Map<string, boolean> = new Map();
+    favorites: Map<string, tcl.PassageArret> = new Map();
 
     constructor() {
         this.loadFavorites();
@@ -32,6 +32,13 @@ export class Store {
         });
     }
 
+    Favorites(): tcl.PassageArret[] {
+        var r =  Array.from(this.favorites.values());
+        console.log("Favorites:", r);
+        return r;
+    }
+
+
     mergeArret(a1 : tcl.PassageArret, a2: tcl.PassageArret) {
         if (this.delai(a1) < this.delai(a2)) {
             a1.delais = [a1.delaipassage, a2.delaipassage];
@@ -45,12 +52,12 @@ export class Store {
     }
 
     isFavorite(arret: tcl.PassageArret) : boolean {
-        return this.favorites.get(arret.id);
+        return this.favorites.has(arret.id);
     }
 
     toggleFavorite(arret: tcl.PassageArret) {
         if (!this.favorites.has(arret.id)) {
-            this.favorites.set(arret.id, true);
+            this.favorites.set(arret.id, arret);
         } else {
             this.favorites.delete(arret.id);
         }
@@ -65,7 +72,7 @@ export class Store {
 
     loadFavorites() {
         let json = localStorage.getItem("favorites")
-        let entries : [string, boolean][] = JSON.parse(json);
+        let entries : [string, tcl.PassageArret][] = JSON.parse(json);
         this.favorites = new Map(entries);
     }
 

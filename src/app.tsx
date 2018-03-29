@@ -6,7 +6,7 @@ interface AppState {
     arrets: tcl.PassageArret[];
     favorites: tcl.PassageArret[];
     searchLigne: string;
-    searchVisibility: string;
+    searchEnable: boolean;
 }
 
 var store = new Store();
@@ -18,17 +18,18 @@ export default class App extends React.Component<any, AppState> {
             arrets: [],
             favorites: [],
             searchLigne: "",
-            searchVisibility: "hidden"
+            searchEnable: false
         }
     }
 
     componentDidMount() {
         store.addChangeListener(s => {
             this.setState(update(this.state, {
-                arrets: s.passages
+                arrets: s.passages,
+                favorites: s.Favorites()
             }));
         });
-        store.getPassages("C13A");
+        store.raise();
     }
 
     render() {
@@ -40,12 +41,12 @@ export default class App extends React.Component<any, AppState> {
                         <span className="fa fa-search"></span>
                     </button>
                 </header>
-                <div className={"search-arret " + this.state.searchVisibility}>
+                <div className={"search-arret " + (this.state.searchEnable ? "" : "hidden")}>
                     <label>Ligne:
                         <input type="text" value={this.state.searchLigne} onChange={(e) => this.handleSearchChange(e)} />
                     </label>
                 </div>
-                <PassageList arrets={this.state.arrets} />
+                <PassageList arrets={this.state.searchEnable ? this.state.arrets : this.state.favorites} />
             </div>
         );
     }
@@ -58,7 +59,7 @@ export default class App extends React.Component<any, AppState> {
 
     toggleSearch() {
         this.setState(update(this.state, {
-            searchVisibility: (this.state.searchVisibility == "" ? "hidden" : "")
+            searchEnable: !this.state.searchEnable
         }));
     }
 
@@ -70,24 +71,31 @@ interface PassageListProps {
 
 class PassageList extends React.Component<PassageListProps, any> {
     render() {
+        console.log(this.props.arrets)
+        var content = [<h1 key="banner-1" className="arrets-help-banner">
+            Saisir le nom d'un ligne et mettre en favori les arrets
+        </h1>];
+        if (this.props.arrets.length > 0) {
+            content = this.props.arrets.map((arret: tcl.PassageArret) => (
+                <div key={arret.gid} className="arrets-item" onClick={(e) => this.toggleFavorite(arret)}>
+                    <span className="arrets-footer">
+                        <span className="arrets-item-arret">{arret.nom}</span>
+                        {store.isFavorite(arret) && (
+                            <span className="arrets-item-favorite"></span>
+                        )}
+                    </span>
+                    <span className="arrets-item-delai">{arret.delais[0]}</span>
+                    <span className="arrets-item-delai">{arret.delais[1]}</span>
+                    <span className="arrets-footer">
+                        <span className="arrets-item-ligne">{arret.ligne}</span>
+                        <span className="arrets-item-direction">{arret.direction}</span>
+                    </span>
+                </div>
+            ));
+        }
         return (
             <div className="arrets-container">
-                {this.props.arrets.map((arret: tcl.PassageArret) => (
-                    <div key={arret.gid} className="arrets-item" onClick={(e) => this.toggleFavorite(arret)}>
-                        <span className="arrets-footer">
-                            <span className="arrets-item-arret">{arret.nom}</span>
-                            {store.isFavorite(arret) && (
-                                <span className="arrets-item-favorite"></span>
-                            )}
-                        </span>
-                        <span className="arrets-item-delai">{arret.delais[0]}</span>
-                        <span className="arrets-item-delai">{arret.delais[1]}</span>
-                        <span className="arrets-footer">
-                            <span className="arrets-item-ligne">{arret.ligne}</span>
-                            <span className="arrets-item-direction">{arret.direction}</span>
-                        </span>
-                    </div>
-                ))}
+                {content}
             </div>
         );
     }
