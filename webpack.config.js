@@ -1,7 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.tsx',
+  entry: {
+    main: './src/main.tsx',
+    sw: './src/sw.ts'
+  },
   mode: "development",
   module: {
     rules: [
@@ -13,20 +16,19 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [{
-            loader: "style-loader" // creates style nodes from JS strings
+          loader: "style-loader" // creates style nodes from JS strings
         }, {
-            loader: "css-loader" // translates CSS into CommonJS
+          loader: "css-loader" // translates CSS into CommonJS
         }, {
-            loader: "sass-loader" // compiles Sass to CSS
+          loader: "sass-loader" // compiles Sass to CSS
         }]
       }
     ]
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: ['.tsx', '.ts', '.js']
   },
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   }
 };

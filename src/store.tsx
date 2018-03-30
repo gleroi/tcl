@@ -1,45 +1,65 @@
 import * as tcl from "./tcl";
 
 export class Store {
-    listeners: ((s :Store) => void)[] = [];
+    listeners: ((s: Store) => void)[] = [];
     passages: tcl.PassageArret[] = [];
     favorites: Map<string, tcl.PassageArret> = new Map();
 
     constructor() {
         this.loadFavorites();
+        this.reloadFavorites()
     }
 
     getPassages(ligne: string) {
         tcl.getPassageArrets(ligne)
-        .then(arrets => {
-            var groups = new Map<string, tcl.PassageArret>();
-            arrets.map(arret => {
-                let key = arret.id + arret.direction;
-                if (groups.has(key)) {
-                    let other = groups.get(key);
-                    this.mergeArret(other, arret)
-                    groups.set(key, other);
-                } else {
-                    arret.delais = [arret.delaipassage, "NA"]
-                    groups.set(key, arret);
-                }
+            .then(arrets => {
+                this.passages = this.merge(arrets);
+                this.raise();
+            })
+            .catch(err => {
+                console.error("retrieving passages arrets", err);
             });
-            this.passages = Array.from(groups.values());
-            this.raise();
-        })
-        .catch(err => {
-            console.error("retrieving passages arrets", err);
-        });
     }
 
-    Favorites(): tcl.PassageArret[] {
-        var r =  Array.from(this.favorites.values());
-        console.log("Favorites:", r);
+    getFavorites(): tcl.PassageArret[] {
+        var r = Array.from(this.favorites.values());
         return r;
     }
 
+    reloadFavorites() {
+        var all = [];
+        for (let key of this.favorites.keys()) {
+            all.push(
+                ((id: string) => {
+                    return tcl.getPassageById(id)
+                        .then(arrets => {
+                            this.favorites.set(id, this.merge(arrets)[0]);
+                            this.raise();
+                        })
+                })(key));
+        }
+        Promise.all(all).then(results => {
+            this.saveFavorites();
+        })
+    }
 
-    mergeArret(a1 : tcl.PassageArret, a2: tcl.PassageArret) {
+    merge(arrets: tcl.PassageArret[]): tcl.PassageArret[] {
+        var groups = new Map<string, tcl.PassageArret>();
+        arrets.map(arret => {
+            let key = arret.id + arret.direction;
+            if (groups.has(key)) {
+                let other = groups.get(key);
+                this.mergeArret(other, arret)
+                groups.set(key, other);
+            } else {
+                arret.delais = [arret.delaipassage, "NA"]
+                groups.set(key, arret);
+            }
+        });
+        return Array.from(groups.values());
+    }
+
+    mergeArret(a1: tcl.PassageArret, a2: tcl.PassageArret) {
         if (this.delai(a1) < this.delai(a2)) {
             a1.delais = [a1.delaipassage, a2.delaipassage];
         } else {
@@ -47,11 +67,14 @@ export class Store {
         }
     }
 
-    delai(a : tcl.PassageArret) : number {
+    delai(a: tcl.PassageArret): number {
+        if (a.delaipassage == "Proche") {
+            return 0;
+        }
         return parseInt(a.delaipassage);
     }
 
-    isFavorite(arret: tcl.PassageArret) : boolean {
+    isFavorite(arret: tcl.PassageArret): boolean {
         return this.favorites.has(arret.id);
     }
 
@@ -72,7 +95,7 @@ export class Store {
 
     loadFavorites() {
         let json = localStorage.getItem("favorites")
-        let entries : [string, tcl.PassageArret][] = JSON.parse(json);
+        let entries: [string, tcl.PassageArret][] = JSON.parse(json);
         this.favorites = new Map(entries);
     }
 
@@ -82,7 +105,7 @@ export class Store {
         }
     }
 
-    addChangeListener(fn : (s: Store) => void) {
+    addChangeListener(fn: (s: Store) => void) {
         this.listeners.push(fn);
     }
 }

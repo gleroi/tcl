@@ -26,7 +26,7 @@ export default class App extends React.Component<any, AppState> {
         store.addChangeListener(s => {
             this.setState(update(this.state, {
                 arrets: s.passages,
-                favorites: s.Favorites()
+                favorites: s.getFavorites()
             }));
         });
         store.raise();
@@ -71,7 +71,6 @@ interface PassageListProps {
 
 class PassageList extends React.Component<PassageListProps, any> {
     render() {
-        console.log(this.props.arrets)
         var content = [<h1 key="banner-1" className="arrets-help-banner">
             Saisir le nom d'un ligne et mettre en favori les arrets
         </h1>];

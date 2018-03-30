@@ -33,3 +33,21 @@ export function getPassageArrets(ligne: string): Promise<PassageArret[]> {
         return json.values;
     });
 }
+
+export function getPassageById(id: string) : Promise<PassageArret[]> {
+    const url = "/api/passagearret?compact=true";
+
+    return fetch(url + "&field=id&value=" + id, {
+        method: "GET",
+        headers: new Headers({
+            'Accept': 'application/json',
+        })
+    })
+    .then(r => r.json())
+    .then(json => {
+        if (json == null || json.values == null) {
+            throw new Error("passage aux arrets: ligne " + id + ": reponses vide");
+        }
+        return json.values;
+    });
+}
