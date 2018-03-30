@@ -8,6 +8,9 @@ export class Store {
     constructor() {
         this.loadFavorites();
         this.reloadFavorites()
+        setInterval(() => {
+            this.reloadFavorites()
+        }, 60 * 1000);
     }
 
     getPassages(ligne: string) {
