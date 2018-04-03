@@ -67,7 +67,8 @@ button {
 
 .arrets-container {
     display: flex;
-    align-items: flex-start;
+    
+    justify-content: stretch;
     flex-wrap: wrap;
 
     .arrets-help-banner {

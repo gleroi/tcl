@@ -74,7 +74,7 @@ class PassageList extends React.Component<PassageListProps, any> {
         var content = [<h1 key="banner-1" className="arrets-help-banner">
             Saisir le nom d'un ligne et mettre en favori les arrets
         </h1>];
-        if (this.props.arrets.length > 0) {
+        if (this.props.arrets && this.props.arrets.length > 0) {
             content = this.props.arrets.map((arret: tcl.PassageArret) => (
                 <div key={arret.gid} className="arrets-item" onClick={(e) => this.toggleFavorite(arret)}>
                     <span className="arrets-footer">
