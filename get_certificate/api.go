@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
-	"time"
-	"net/http"
+	"fmt"
 	"mime/multipart"
+	"net/http"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -57,7 +57,7 @@ func (api *api) RequestSubscriptionCertificate(cardID string, email string, birt
 	w.WriteField("annee_date_fin", fmt.Sprintf("%d", year))
 	w.Close()
 
-	req, err := http.NewRequest("POST", api.baseURL + TCLSubscriptionCertificateService, form)
+	req, err := http.NewRequest("POST", api.baseURL+TCLSubscriptionCertificateService, form)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (api *api) RequestSubscriptionCertificate(cardID string, email string, birt
 	}
 
 	buf := bytes.NewBuffer(nil)
-	doc.Find(".BLOC-alerte").Each(func (_ int, sel *goquery.Selection) {
+	doc.Find(".BLOC-alerte").Each(func(_ int, sel *goquery.Selection) {
 		msg := sel.Text()
 		fmt.Fprintln(buf, msg)
 	})

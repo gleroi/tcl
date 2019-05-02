@@ -9,8 +9,8 @@ import (
 
 type BirthDate time.Time
 
-func Birthday(year,month,day int) BirthDate {
-	return BirthDate(time.Date(year, time.Month(month), day,0,0,0,0,time.UTC))
+func Birthday(year, month, day int) BirthDate {
+	return BirthDate(time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC))
 }
 
 func (d *BirthDate) Set(val string) error {
@@ -48,7 +48,6 @@ type options struct {
 	email    string
 	birthday BirthDate
 }
-
 
 func main() {
 	var opt options
