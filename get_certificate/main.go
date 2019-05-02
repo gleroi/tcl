@@ -71,7 +71,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	fmt.Printf("retrieving certificate for card %s\n", opt.cardID)
+	fmt.Printf("requesting certificate for card %s\n", opt.cardID)
 	fmt.Printf("\tfor month %02d-%d\n", opt.month, opt.year)
 	fmt.Printf("\tfor email %s\n", opt.email)
 
